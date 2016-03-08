@@ -1,5 +1,5 @@
 package eventpublisher
 
 type Transporter interface {
-	Publish(e *Event)
+	Publish(e *Event) error
 }

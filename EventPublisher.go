@@ -24,6 +24,8 @@ func (e *EventPublisher) GetEnabled() bool {
 	return e.Enabled
 }
 
-func (e *EventPublisher) Publish(eV *Event) {
-	e.Transporter.Publish(eV)
+func (e *EventPublisher) Publish(eV *Event) error {
+	err := e.Transporter.Publish(eV)
+	return err
+
 }

@@ -17,7 +17,7 @@ type KinesisTransporter struct {
 }
 
 // Publish publishes event
-func (k *KinesisTransporter) Publish(e *Event) {
+func (k *KinesisTransporter) Publish(e *Event) error {
 	k.Message = e.GetType()
 	fmt.Println(k.Message)
 
@@ -27,12 +27,12 @@ func (k *KinesisTransporter) Publish(e *Event) {
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return
+		return err
 	}
 
 	// Pretty-print the response data.
 	fmt.Println(resp)
-
+	return nil
 }
 
 func (k *KinesisTransporter) GetMessage() string {

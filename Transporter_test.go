@@ -24,9 +24,12 @@ func TestKinesisTransporterPublish(t *testing.T) {
 
 	//svc
 	e := BuildEvent("origin", "Type", s)
-	n.Publish(e)
+	err := n.Publish(e)
 	fmt.Println("message=" + n.GetMessage())
-
+	if err != nil {
+		fmt.Println(err.Error())
+		t.Fail()
+	}
 }
 
 func TestEventPublisherPublish(t *testing.T) {
@@ -49,7 +52,10 @@ func TestEventPublisherPublish(t *testing.T) {
 
 	//svc
 	e := BuildEvent("origin", "Type", s)
-	ep.Publish(e)
+	err := ep.Publish(e)
 	fmt.Println("message=" + n.GetMessage())
-
+	if err != nil {
+		fmt.Println(err.Error())
+		t.Fail()
+	}
 }
