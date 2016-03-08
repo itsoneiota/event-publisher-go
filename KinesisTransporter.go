@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/kinesis"
 )
 
+//KinesisTransporter - Describes KinesisTransporter
 type KinesisTransporter struct {
 	Message       string
 	Transporter   Transporter
@@ -16,7 +17,7 @@ type KinesisTransporter struct {
 	Partitions    int32
 }
 
-// Publish publishes event
+// Publish publishes event using Kinesis
 func (k *KinesisTransporter) Publish(e *Event) error {
 	k.Message = e.GetType()
 	fmt.Println(k.Message)
@@ -35,35 +36,35 @@ func (k *KinesisTransporter) Publish(e *Event) error {
 	return nil
 }
 
-func (k *KinesisTransporter) GetMessage() string {
-	m := k.Message
-	fmt.Println("m=" + m)
-	return m
-}
-
+//GetStreamName - returns StreamName
 func (k *KinesisTransporter) GetStreamName() string {
 	s := k.StreamName
 	return s
 }
 
+//SetStreamName - Set Kinesis StreamName
 func (k *KinesisTransporter) SetStreamName(sn string) {
 	k.StreamName = sn
 }
 
+//SetPartitions - Specify the amount of partitions (defaults to 0)
 func (k *KinesisTransporter) SetPartitions(p int32) {
 	k.Partitions = p
 }
 
+//GetPartition - returns either 0 or a random number between 0 and the partion count set above.
 func (k *KinesisTransporter) GetPartition() int32 {
+	if k.Partitions == 0 {
+		return k.Partitions
+	}
 	n := rand.Int31n(k.Partitions)
 	return n
 }
 
+//BuildKinesisParams - Build message to send to Kinesis.
 func (k *KinesisTransporter) BuildKinesisParams(e *Event) kinesis.PutRecordInput {
-	b := e.GetEventAsJson()
-	fmt.Println(string(b))
 	params := kinesis.PutRecordInput{
-		Data:         e.GetEventAsJson(),                   // Required
+		Data:         e.GetEventAsJSON(),                   // Required
 		PartitionKey: aws.String(string(k.GetPartition())), // Required needs to be a string though
 		StreamName:   aws.String(k.GetStreamName()),        // Convert the Event struct to JSON
 	}

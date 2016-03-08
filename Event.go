@@ -6,26 +6,20 @@ import (
 	"time"
 )
 
-// func main() {
-// 	t := time.Now().UnixNano() / 1000000
-// 	b := Event{
-// 		Header: Header{
-// 			Type:      "Record",
-// 			TimeStamp: t,
-// 			Origin:    "GOLANG_EVENT_LOG",
-// 		},
-// 		Body: "{'message Here'}",
-// 	}
+/*BuildEvent - Accepts origin and type as strings, and an interface for body
+Example call:
+body := struct {
+	Body string
+	RequestURI string
+	ResponseCode string
+}{"Json Body of message",
+	"requestURI Here",
+	"ResponseCode Here"}
 
-// 	v, err := json.Marshal(b)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return
-// 	}
-// 	//fmt.Println(b.getType())
-// 	//fmt.Println(string(v))
+e := BuildEvent("origin", "Type", body)
 
-// }
+Build Header from Origin and Type, and returns an Event
+*/
 func BuildEvent(o, t string, b interface{}) *Event {
 	E := new(Event)
 	E.Header = BuildHeader(o, t)
@@ -33,6 +27,10 @@ func BuildEvent(o, t string, b interface{}) *Event {
 	return E
 }
 
+/*BuildHeader - called form BuildEvent function.
+Generates a valide Event.Header from Origin and Type
+Inserts Millisecond timestamp
+*/
 func BuildHeader(o, t string) Header {
 	H := Header{
 		Type:      t,
@@ -42,22 +40,32 @@ func BuildHeader(o, t string) Header {
 	return H
 }
 
+/*Header - Struct
+Contains Header information common to all Events
+*/
 type Header struct {
 	Type      string `json:"type"`
 	TimeStamp int64  `json:"timeStamp"`
 	Origin    string `json:"origin"`
 }
+
+/*Event - Struct
+Contains a Header and a Body, body is passed inas an empty interfcae here to allow for generating structs on the fly.
+*/
 type Event struct {
 	Header Header      `json:"header"`
 	Body   interface{} `json:"body"`
 }
 
+/*GetType Returns Event type form Header - Not used in general usage.
+ */
 func (e *Event) GetType() string {
 	t := e.Header.Type
 	return t
 }
 
-func (e *Event) GetEventAsJson() []byte {
+//GetEventAsJSON returns byte array of the Event as JSON Used when sending to Kinesis.
+func (e *Event) GetEventAsJSON() []byte {
 	v, err := json.Marshal(e)
 	if err != nil {
 		fmt.Println(err)
