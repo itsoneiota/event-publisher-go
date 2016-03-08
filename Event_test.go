@@ -1,20 +1,61 @@
-package EventPublisher
+package eventpublisher
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/kinesis"
 )
 
 func TestBuildHeader(t *testing.T) {
-	h := BuildHeader("Test SUite", "Something else here")
+	//CreateQueue()
+	h := BuildHeader("Origin", "EventType")
 	//fmt.Println(h.Type)
-	if h.Type != "Something else here" {
-		fmt.Println("Title not the same as set title1")
+	if h.Type != "EventType" {
+		fmt.Println("Event type is not = EventType")
 		t.Fail()
+	} else {
+		fmt.Println("Event Type == EventType")
 	}
 }
 
 func TestBuildEvent(t *testing.T) {
-	e := BuildEvent("origin", "Type", "{'body':'Json Stuff Here'}")
-	fmt.Println(e.getType())
+	s := struct {
+		Body string
+		Head string
+		Legs string
+	}{"Json Body of message",
+		"Head here",
+		"Legs here"}
+
+	e := BuildEvent("origin", "Type", s)
+	if e.GetType() != "Type" {
+		fmt.Println("Type is not what we sent through")
+		t.Fail()
+	} else {
+		fmt.Println("Event type = Type")
+	}
+}
+func CreateQueue() {
+
+	KinesisClient := kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String("http://192.168.99.100:4567")})
+
+	params := &kinesis.CreateStreamInput{
+		ShardCount: aws.Int64(2),              // Required
+		StreamName: aws.String("event-queue"), // Required
+	}
+	resp, err := KinesisClient.CreateStream(params)
+
+	if err != nil {
+		// Print the error, cast err to awserr.Error to get the Code and
+		// Message from an error.
+		fmt.Println(err.Error())
+		return
+	}
+
+	// Pretty-print the response data.
+	fmt.Println(resp)
+
 }
