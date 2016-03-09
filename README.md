@@ -38,7 +38,31 @@ Publish Event to Transporter (in this case Kinesis)
 
 (catch error and handle it if required.)
 
-For Tests a local instance of Kinesalite needs to be running. (Docker image assumed running on http://192.168.99.100:4567 )
-Uncomment   //CreateQueue() on line 13 of Event_test.go to create the queue initially. Can be removed for subsequent tests.
+For Tests a local instance of Kinesalite needs to be running. 
+Kinesalite docker image here: jenkins.devatmesh.com:5000/oneiota/kinesislite
+
+Run With: docker run -d -t -p 4567:4567 jenkins.devatmesh.com:5000/oneiota/kinesislite
+
+Docker image assumed running on http://192.168.99.100:4567, your IP may be different (tests may hang if this is the case.)
+To find your docker-machine IP run: 
+docker-machine ls
+
+This should show the IP's of running boxes. 
+Change this line in Transporter_test.go to match your IP (leave the port as 4567):
+
+    const kinesaliteEndpoint = "http://192.168.99.101:4567"
+
+
+Uncomment   
+    
+        //CreateQueue() 
+
+on line 13 of Event_test.go to create the queue initially (run: go test ). Can be re-commented for subsequent tests.
+There can be a delay when creating the queue, so initially tests may fail, complaing that the stream cant be found. 
+If this haoppen, wait a minute, then try the tests again.  
+
+
+
+
 
 

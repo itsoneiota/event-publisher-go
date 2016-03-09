@@ -40,7 +40,7 @@ func TestBuildEvent(t *testing.T) {
 }
 func CreateQueue() {
 
-	KinesisClient := kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String("http://192.168.99.100:4567")})
+	KinesisClient := kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(kinesaliteEndpoint)})
 
 	params := &kinesis.CreateStreamInput{
 		ShardCount: aws.Int64(2),              // Required
