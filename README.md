@@ -3,7 +3,7 @@
 To create and send a message:
 Create new KinesisTransporter
     
-       var n = new(KinesisTransporter)
+    var n = new(KinesisTransporter)
 Create an instance of the Kinesis Service. 
 
     n.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1")})

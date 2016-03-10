@@ -3,17 +3,13 @@ package eventpublisher
 import (
 	"fmt"
 	"testing"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/kinesis"
 )
 
 const kinesaliteEndpoint = "http://192.168.99.101:4567"
 
 func TestKinesisTransporterPublish(t *testing.T) {
 	var n = new(KinesisTransporter)
-	n.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(kinesaliteEndpoint)})
+	n.BuildKinesisClient(kinesaliteEndpoint) //KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(kinesaliteEndpoint)})
 	n.SetStreamName("event-queue")
 	//n.SetPartitions(2)
 	s := struct {
@@ -39,7 +35,7 @@ func TestEventPublisherPublish(t *testing.T) {
 	ep.SetEnabled(true)
 
 	var n = new(KinesisTransporter)
-	n.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(kinesaliteEndpoint)})
+	n.BuildKinesisClient(kinesaliteEndpoint) //kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(kinesaliteEndpoint)})
 	n.SetStreamName("event-queue")
 	//n.SetPartitions(2)
 	ep.SetTransporter(n)

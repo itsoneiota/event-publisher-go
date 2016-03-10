@@ -5,6 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 )
 
@@ -20,7 +21,7 @@ type KinesisTransporter struct {
 // Publish publishes event using Kinesis
 func (k *KinesisTransporter) Publish(e *Event) error {
 	k.Message = e.GetType()
-	fmt.Println(k.Message)
+	//fmt.Println(k.Message)
 
 	params := k.BuildKinesisParams(e)
 
@@ -59,6 +60,14 @@ func (k *KinesisTransporter) GetPartition() int32 {
 	}
 	n := rand.Int31n(k.Partitions)
 	return n
+}
+
+func (k *KinesisTransporter) BuildKinesisClient(endpoint string) {
+	if endpoint != "" {
+		k.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(endpoint)})
+	} else {
+		k.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1")})
+	}
 }
 
 //BuildKinesisParams - Build message to send to Kinesis.
