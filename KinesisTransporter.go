@@ -12,7 +12,6 @@ import (
 //KinesisTransporter - Describes KinesisTransporter
 type KinesisTransporter struct {
 	Message       string
-	Transporter   Transporter
 	StreamName    string
 	KinesisClient *kinesis.Kinesis
 	Partitions    int32
@@ -21,7 +20,6 @@ type KinesisTransporter struct {
 // Publish publishes event using Kinesis
 func (k *KinesisTransporter) Publish(e *Event) error {
 	k.Message = e.GetType()
-	//fmt.Println(k.Message)
 
 	params := k.BuildKinesisParams(e)
 
@@ -31,9 +29,10 @@ func (k *KinesisTransporter) Publish(e *Event) error {
 		fmt.Println(err.Error())
 		return err
 	}
+	if resp == nil {
 
-	// Pretty-print the response data.
-	fmt.Println(resp)
+	}
+
 	return nil
 }
 
@@ -62,12 +61,13 @@ func (k *KinesisTransporter) GetPartition() int32 {
 	return n
 }
 
-func (k *KinesisTransporter) BuildKinesisClient(endpoint string) {
+//BuildKinesisClient Builds a kinesis client, allowing specification of endpoint (used for when running locally)
+func BuildKinesisClient(endpoint string) *kinesis.Kinesis {
 	if endpoint != "" {
-		k.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(endpoint)})
-	} else {
-		k.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1")})
+		return kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1"), Endpoint: aws.String(endpoint)})
 	}
+	return kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1")})
+
 }
 
 //BuildKinesisParams - Build message to send to Kinesis.
@@ -79,4 +79,19 @@ func (k *KinesisTransporter) BuildKinesisParams(e *Event) kinesis.PutRecordInput
 	}
 
 	return params
+}
+
+/* NewKinesisTransporter  Build a kinesis transporter
+/ s: Kinesis Stream Name
+/ e: Kinesis Endpoint (use empty string if not locally run)
+/ p: Partition count on kinesis stream
+/ Returns *KinesisTransporter
+*/
+func NewKinesisTransporter(s, e string, p int32) (k *KinesisTransporter) {
+	return &KinesisTransporter{
+		Message:       "",
+		StreamName:    s,
+		KinesisClient: BuildKinesisClient(e),
+		Partitions:    p,
+	}
 }

@@ -3,10 +3,11 @@
 To create and send a message:
 Create new KinesisTransporter
     
-    var n = new(KinesisTransporter)
-Create an instance of the Kinesis Service. 
+    var N = new(eventpublisher.KinesisTransporter)
+Create an instance of the Kinesis Service. Requires either an empty string or a local kinsalite Address. 
 
-    n.KinesisClient = kinesis.New(session.New(), &aws.Config{Region: aws.String("eu-west-1")})
+    N.BuildKinesisCLient("") 
+
 
 Note: session.New() pulls credentials from 
     Environment settings 

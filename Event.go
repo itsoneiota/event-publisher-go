@@ -6,15 +6,32 @@ import (
 	"time"
 )
 
+/*Header - Struct
+Contains Header information common to all Events
+*/
+type Header struct {
+	Type      string `json:"type"`
+	TimeStamp int64  `json:"timeStamp"`
+	Origin    string `json:"origin"`
+}
+
+/*Event - Struct
+Contains a Header and a Body, body is passed inas an empty interfcae here to allow for generating structs on the fly.
+*/
+type Event struct {
+	Header Header      `json:"header"`
+	Body   interface{} `json:"body"`
+}
+
 /*BuildEvent - Accepts origin and type as strings, and an interface for body
 Example call:
 body := struct {
-	Body string
-	RequestURI string
-	ResponseCode string
+    Body string
+    RequestURI string
+    ResponseCode string
 }{"Json Body of message",
-	"requestURI Here",
-	"ResponseCode Here"}
+    "requestURI Here",
+    "ResponseCode Here"}
 
 e := BuildEvent("origin", "Type", body)
 
@@ -40,23 +57,6 @@ func BuildHeader(o, t string) Header {
 	return H
 }
 
-/*Header - Struct
-Contains Header information common to all Events
-*/
-type Header struct {
-	Type      string `json:"type"`
-	TimeStamp int64  `json:"timeStamp"`
-	Origin    string `json:"origin"`
-}
-
-/*Event - Struct
-Contains a Header and a Body, body is passed inas an empty interfcae here to allow for generating structs on the fly.
-*/
-type Event struct {
-	Header Header      `json:"header"`
-	Body   interface{} `json:"body"`
-}
-
 /*GetType Returns Event type form Header - Not used in general usage.
  */
 func (e *Event) GetType() string {
@@ -72,4 +72,20 @@ func (e *Event) GetEventAsJSON() []byte {
 		return nil
 	}
 	return v
+}
+
+//NewMockEvent Used for tests.
+func NewMockEvent() *Event {
+	h := Header{Type: "MockHeader",
+		TimeStamp: time.Now().UnixNano() / 1000000,
+		Origin:    "MockOrigin"}
+	e := Event{Header: h, Body: struct {
+		Body         string
+		RequestURI   string
+		ResponseCode string
+	}{"Json Body of message",
+		"requestURI Here",
+		"ResponseCode Here"}}
+	return &e
+
 }
