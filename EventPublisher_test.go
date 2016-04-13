@@ -60,6 +60,23 @@ func TestNewEventPublisherMethod(t *testing.T) {
 	}
 }
 
+// Used for stress testing actual kinesis / lambda flow
+
+// func TestStressTestEventPublisherMethod(t *testing.T) {
+// 	n := NewKinesisTransporter("event-queue", "", 1)
+// 	en := true
+// 	e, _ := NewEventPublisher(n, en)
+// 	for i := 0; i < 1000; i++ {
+
+// 		ev := NewMockEvent()
+// 		er := e.Publish(ev)
+// 		if er != nil {
+// 			fmt.Println(er.Error())
+// 		}
+// 	}
+
+// }
+
 //Commented out below only really testable on local box.
 
 // func TestNewKinesisEventPublisher(t *testing.T) {
