@@ -32,7 +32,6 @@ func (k *FirehoseTransporter) Publish(e *Event) error {
 	if resp == nil {
 
 	}
-	fmt.Println(resp)
 
 	return nil
 }
