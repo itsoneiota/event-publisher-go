@@ -60,13 +60,13 @@ func TestNewEventPublisherMethod(t *testing.T) {
 	}
 }
 
-// Used for stress testing actual kinesis / lambda flow
+//Used for stress testing actual kinesis / lambda flow
 
 // func TestStressTestEventPublisherMethod(t *testing.T) {
-// 	n := NewKinesisTransporter("event-queue", "", 1)
+// 	n := NewFirehoseTransporter("event-stream", "", 1)
 // 	en := true
 // 	e, _ := NewEventPublisher(n, en)
-// 	for i := 0; i < 1000; i++ {
+// 	for i := 0; i < 100; i++ {
 
 // 		ev := NewMockEvent()
 // 		er := e.Publish(ev)
