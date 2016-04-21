@@ -46,3 +46,10 @@ func NewKinesisEventPublisher(s, e string, en bool, p int32) (svc *EventPublishe
 	k := NewKinesisTransporter(s, e, p)
 	return &EventPublisher{Transporter: k, Enabled: en}, nil
 }
+
+//NewFirehoseEventPublisher - Build a publisher with a Firehose client.
+//Accepts: s (streamname), e (kinesis endpoint), en (enabled), p (int32 partition count on stream)
+func NewFirehoseEventPublisher(s, e string, en bool, p int32) (svc *EventPublisher, err error) {
+	k := NewFirehoseTransporter(s, e, p)
+	return &EventPublisher{Transporter: k, Enabled: en}, nil
+}
